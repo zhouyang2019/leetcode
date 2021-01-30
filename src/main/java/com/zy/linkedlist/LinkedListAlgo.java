@@ -1,5 +1,8 @@
 package com.zy.linkedlist;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 极客时间
  * 1) 单链表反转
@@ -180,6 +183,44 @@ public class LinkedListAlgo {
         public int getVal() {
             return val;
         }
+    }
+
+    public static void main(String[] args) {
+
+        String s = "{}[]()[]";
+        while (s.contains("()") || s.contains("[]") || s.contains("{}")) {
+            s = s.replaceAll("\\(\\)", "").replaceAll("\\[\\]", "").replaceAll("\\{\\}", "");
+        }
+
+        System.out.println("".equals(s) ? true : false);
+//        System.out.println(isValid(s));
+    }
+
+    public static boolean isValid(String s) {
+        char[] chars = s.toCharArray();
+        if ((chars.length & 1) != 0) {
+            return false;
+        }
+        Map<Character, Character> map = new HashMap<>();
+        map.put(new Character('('), new Character(')'));
+        map.put(new Character('['), new Character(']'));
+        map.put(new Character('{'), new Character('}'));
+
+        int l = 0;
+        int r = chars.length - 1;
+        while (l < r) {
+            Character expected = map.get(chars[l]);
+            if (new Character(chars[l + 1]).equals(expected)) {
+                l += 2;
+            } else if (new Character(chars[r]).equals(expected)) {
+                l++;
+                r--;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
