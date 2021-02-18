@@ -6,6 +6,8 @@ import java.util.List;
 
 /**
  * https://blog.csdn.net/My_Jobs/article/details/43451187
+ *
+ * https://mp.weixin.qq.com/s/WKg0Ty1_3SZkztpHubZPRg
  */
 public class TreeTraverse {
 
@@ -21,15 +23,19 @@ public class TreeTraverse {
 
     public static List<Integer> preOrderTraverse2(TreeNode root) {
         List<Integer> result = new ArrayList<>();
+        if (root == null) {
+            return result;
+        }
         LinkedList<TreeNode> stack = new LinkedList<>();
-        TreeNode pNode = root;
-        while (pNode != null || !stack.isEmpty()) {
-            if (pNode != null) {
-                result.add(pNode.val);
-                stack.push(pNode);
-                pNode = pNode.left;
-            } else {
-                pNode = stack.pop().right;
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode pNode = stack.pop();
+            result.add(pNode.val);
+            if (pNode.right != null) {
+                stack.push(pNode.right);
+            }
+            if (pNode.left != null) {
+                stack.push(pNode.left);
             }
         }
         return result;
@@ -45,16 +51,18 @@ public class TreeTraverse {
         return result;
     }
 
+    /**
+     * 中序遍历：左中右
+     * 要处理的元素与要访问的元素顺序不一致，所以与前序遍历的写法不同
+     */
     public static List<Integer> inOrderTraverse2(TreeNode root) {
-        // 通常情况下，不推荐使用Vector以及其子类Stack
-//        Stack<TreeNode> stack = new Stack<>();
         List<Integer> result = new ArrayList<>();
         LinkedList<TreeNode> stack = new LinkedList<>();
         TreeNode pNode = root;
         while (pNode != null || !stack.isEmpty()) {
             if (pNode != null) {
-                stack.push(pNode);
-                pNode = pNode.left;
+                stack.push(pNode); // 将当前节点压栈
+                pNode = pNode.left; // 当前节点移动到左节点
             } else {
                 TreeNode node = stack.pop();
                 result.add(node.val);
@@ -74,32 +82,34 @@ public class TreeTraverse {
         return result;
     }
 
+    /**
+     * 后序遍历：左右中
+     * 可以先通过「中右左」遍历，然后将遍历结果翻转即可得到「左右中」遍历结果
+     */
     public static List<Integer> postOrderTraverse2(TreeNode root) {
         List<Integer> result = new ArrayList<>();
+        if (root == null) {
+            return result;
+        }
         LinkedList<TreeNode> stack = new LinkedList<>();
-        TreeNode pNode = root;
-        while (pNode != null || !stack.isEmpty()) {
-            if (pNode != null) {
-                stack.push(pNode);
-                pNode = pNode.left;
-            } else {
-                pNode = stack.pop().right;
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            result.add(node.val);
+            if (node.left != null) {
+                stack.push(node.left);
             }
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+        }
 
-            if (pNode != null) {
-                stack.push(pNode);
-                TreeNode left = pNode.left;
-                TreeNode right = pNode.right;
-                pNode = left;
-                if (right != null) {
-                    stack.push(right);
-                    pNode = right;
-                }
-            } else {
-                TreeNode node = stack.pop();
-                result.add(node.val);
-                pNode = node.right;
-            }
+        int l = 0;
+        int r = result.size() - 1;
+        while (l < r) {
+            Integer tmp = result.get(r);
+            result.set(r--, result.get(l));
+            result.set(l++, tmp);
         }
         return result;
     }
@@ -130,6 +140,7 @@ public class TreeTraverse {
 
     /**
      * 深度优先遍历
+     * 其实就是前序遍历
      */
     public static List<Integer> depthOrderTraverse(TreeNode root) {
         List<Integer> result = new ArrayList<>();
@@ -150,39 +161,6 @@ public class TreeTraverse {
         }
 
         return result;
-    }
-
-    public static boolean isBalanced(TreeNode root) {
-        if (root == null) {
-            return true;
-        }
-        return Math.abs(maxDepth(root.left) - maxDepth(root.right)) <= 1
-                && isBalanced(root.left)
-                && isBalanced(root.right);
-    }
-
-    public static int maxDepth(TreeNode root) {
-        return root == null ? 0 : Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
-    }
-
-    public static int minDepth(TreeNode root) {
-        return root == null ? 0 : Math.min(minDepth(root.left), minDepth(root.right)) + 1;
-    }
-
-
-    /**
-     * 十进制转二十六进制
-     */
-    public static String convertToTitle(int n) {
-        StringBuilder sb = new StringBuilder();
-        while (n > 0) {
-            int c = n % 26;
-            if (c == 0)
-                c = 27;
-            sb.insert(0, (char) ('A' + c - 1));
-            n /= 26;
-        }
-        return sb.toString();
     }
 
 }
