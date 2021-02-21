@@ -3,7 +3,9 @@ package com.zy.tree;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Binary Search Tree 二叉树
@@ -24,14 +26,14 @@ import java.util.List;
  */
 public class BST {
 
-    @Test
-    public void test() {
-        TreeNode treeNode = TreeNode.createTreeNode(new Integer[]{2147483647});
-//        TreeNode treeNode = TreeNode.createTreeNode(new Integer[]{2,1,3});
-//        TreeNode treeNode = TreeNode.createTreeNode(new Integer[]{5, 1, 4, null, null, 3, 6});
-        System.out.println(isValidBST(treeNode));
-        System.out.println(isValidBST2(treeNode));
-    }
+//    @Test
+//    public void test() {
+//        TreeNode treeNode = TreeNode.createTreeNode(new Integer[]{2147483647});
+////        TreeNode treeNode = TreeNode.createTreeNode(new Integer[]{2,1,3});
+////        TreeNode treeNode = TreeNode.createTreeNode(new Integer[]{5, 1, 4, null, null, 3, 6});
+//        System.out.println(isValidBST(treeNode));
+//        System.out.println(isValidBST2(treeNode));
+//    }
 
     /**
      * 递归
@@ -84,6 +86,63 @@ public class BST {
             result.addAll(inOrderTraverse(node.right));
         }
         return result;
+    }
+
+    /**
+     * 530. Minimum Absolute Difference in BST
+     * https://leetcode-cn.com/problems/minimum-absolute-difference-in-bst/
+     */
+    public int getMinimumDifference(TreeNode root) {
+        List<Integer> list = inOrderTraverse(root);
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < list.size() - 1; i++) {
+            int v = Math.abs(list.get(i + 1) - list.get(i));
+            min = Math.min(min, v);
+        }
+        return min;
+    }
+
+
+    /**
+     * 501. Find Mode in Binary Search Tree
+     * https://leetcode-cn.com/problems/find-mode-in-binary-search-tree/
+     */
+    public int[] findMode(TreeNode root) {
+        if (root == null) {
+            return new int[]{};
+        }
+        // key是root.val，value是count
+        Map<Integer, Integer> map = new HashMap<>();
+        inTraverse(root, map);
+
+        List<Integer> maxKeyList = new ArrayList<Integer>() {{
+            add(0);
+        }};
+        int maxVal = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() > maxVal) {
+                maxVal = entry.getValue();
+                maxKeyList = new ArrayList<Integer>() {{
+                    add(entry.getKey());
+                }};
+            } else if (entry.getValue() == maxVal) {
+                maxKeyList.add(entry.getKey());
+            }
+        }
+        return maxKeyList.stream().mapToInt(i -> i).toArray();
+    }
+
+    public void inTraverse(TreeNode root, Map<Integer, Integer> map) {
+        if (root != null) {
+            Integer cnt = map.get(root.val);
+            if (cnt == null) {
+                map.put(root.val, 1);
+            } else {
+                map.put(root.val, ++cnt);
+            }
+            inTraverse(root.left, map);
+            inTraverse(root.right, map);
+        }
     }
 
 }
