@@ -17,10 +17,11 @@ public class NQueens {
     }
 
     private void solveNQueensBacktracking(int n, List<Integer> path, List<List<String>> result) {
+        if (detectAttack(path)) {
+            return;
+        }
         if (n == path.size()) {
-            if (!detectAttack(path)) {
-                result.add(build(path));
-            }
+            result.add(build(path));
             return;
         }
         for (int i = 0; i < n; i++) {
@@ -50,11 +51,10 @@ public class NQueens {
     }
 
     public boolean detectAttack(List<Integer> path) {
-        for (int i = 0; i < path.size() - 1; i++) {
-            for (int j = i + 1; j < path.size(); j++) {
-                if (Math.abs(path.get(j) - path.get(i)) == (j - i)) {
-                    return true;
-                }
+        int curIdx = path.size() - 1;
+        for (int p = curIdx - 1; p >= 0; p--) {
+            if (Math.abs(path.get(curIdx) - path.get(p)) == (curIdx - p)) {
+                return true;
             }
         }
         return false;
